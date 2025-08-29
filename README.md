@@ -25,18 +25,65 @@ RAG/
 
 ## 🚀 Getting Started
 
+The system operates in two modes:
+1. **Basic Mode**: Resume matching using vector similarity (always available)
+2. **Enhanced Mode**: AI-powered analysis using Mistral (requires Ollama setup)
+
 ### Prerequisites
 
 - Python 3.10 or higher
 - Virtual environment
 - Tesseract OCR (for scanned documents)
-- Ollama (for Mistral AI integration)
+- Ollama with Mistral AI model (for enhanced analysis)
+
+### Installation
+
+#### Basic Setup
+
+1. **Python Environment Setup**:
+   ```bash
+   # Create and activate virtual environment
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   
+   # Install dependencies
+   pip install -r requirements.txt
+   ```
+
+2. **Tesseract OCR** (Optional - for scanned documents):
+   - macOS: `brew install tesseract`
+   - Linux: `sudo apt-get install tesseract-ocr`
+   - Windows: Download installer from GitHub
+
+#### Mistral AI Setup (Required for Enhanced Analysis)
+
+1. **Install Ollama**:
+   - macOS/Linux:
+     ```bash
+     curl https://ollama.ai/install.sh | sh
+     ```
+   - Windows: Download from [Ollama's website](https://ollama.ai)
+
+2. **Pull Mistral Model**:
+   ```bash
+   ollama pull mistral
+   ```
+
+3. **Verify Installation**:
+   ```bash
+   ollama run mistral "Hello, testing Mistral AI"
+   ```
+
+⚠️ **Important Note**: The enhanced analysis features require Mistral AI through Ollama. If you don't have Mistral AI set up:
+- Basic resume matching will still work
+- AI-enhanced analysis features will be disabled
+- You can still use the system with reduced functionality
 
 ### Installation
 
 1. Clone the repository:
 ```bash
-git clone <https://github.com/deepanmpc/ResumeAnalyse_RAG-Architecture.git>
+git clone <repository-url>
 cd RAG
 ```
 
@@ -74,6 +121,8 @@ python main.py --query "python developer with 5 years experience" -n 3
 ```
 
 ## 🔧 Components
+
+Note: AI Enhancement features require Mistral AI setup. Other components work independently.
 
 ### 1. Knowledge Extraction (350+ lines)
 - PDF Parser: Advanced text extraction with OCR support
