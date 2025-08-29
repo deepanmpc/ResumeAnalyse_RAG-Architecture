@@ -1,0 +1,111 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.env
+.venv/
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project specific
+resume_chroma_db/
+*.log
+resume_analysis_*.json
+resume_analyzer.log
+Screenshot*.png
+test_sample.txt
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*~
+
+# Database
+*.sqlite3
+*.db
+
+# Large media files
+*.pdf
+*.docx
+*.doc
+*.png
+*.jpg
+*.jpeg
+
+# Keep example data
+!DATA_resume/example_resume.pdf
+!JOB_DESCRIPTIONS/example_job.pdf
+
+# Local development
+local_settings.py
+settings_local.py
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Debug files
+debug.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test coverage
+.coverage
+coverage/
+htmlcov/
+
+# Distribution
+dist/
+build/
+*.pyc
+
+# Application specific
+DATA_resume/*
+!DATA_resume/example_resume.pdf
+JOB_DESCRIPTIONS/*
+!JOB_DESCRIPTIONS/example_job.pdf
+resume_chroma_db/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
