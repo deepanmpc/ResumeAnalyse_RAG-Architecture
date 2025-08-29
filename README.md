@@ -9,7 +9,7 @@ A sophisticated resume analysis and matching system that uses RAG (Retrieval Aug
 - 🧠 **Intelligent Matching**: Uses embeddings and semantic search
 - 💾 **Vector Database**: ChromaDB for efficient similarity search
 - 🤖 **AI Enhancement**: Mistral AI for advanced analysis
-- 📊 **Structured Output**: JSON format analysis results
+- 📊 **Structured Output**: JSON format analysis results.
 
 ## 🏗️ Project Structure
 
