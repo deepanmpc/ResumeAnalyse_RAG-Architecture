@@ -6,7 +6,7 @@ Handles the generation of document and section-level embeddings.
 import json
 import os
 import hashlib
-from sentence_transformers import SentenceTransformer
+from sentence_transformers import SentenceTransformer   
 from typing import Dict, Any
 
 def process_extracted_data(
