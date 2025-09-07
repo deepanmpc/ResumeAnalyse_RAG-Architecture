@@ -98,7 +98,10 @@ build/
 *.pyc
 
 # Application specific
-
+DATA_resume/*
+!DATA_resume/example_resume.pdf
+JOB_DESCRIPTIONS/*
+!JOB_DESCRIPTIONS/example_job.pdf
 resume_chroma_db/
 __pycache__/
 *.pyc
