@@ -112,7 +112,8 @@ def summarize_matches_with_llm(job_text: str, matches: dict):
 
     try:
         response = ollama.chat(
-            model='mistral:instruct',
+            #model='mistral:instruct',
+            model='mistral',
             messages=[{'role': 'user', 'content': prompt}]
         )
         print("--- AI Summary ---")
