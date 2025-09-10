@@ -83,7 +83,7 @@ The system operates in two modes:
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/deepanmpc/ResumeAnalyse_RAG-Architecture.git
 cd RAG
 ```
 
