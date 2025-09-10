@@ -110,3 +110,15 @@ __pycache__/
 .Python
 *.so
 cmd.txt
+
+# Logs
+*.log
+resume_analyzer.log
+
+# Node / React (for web/)
+web/node_modules/
+web/package-lock.json
+web/bun.lockb
+
+# Build outputs
+web/dist/
