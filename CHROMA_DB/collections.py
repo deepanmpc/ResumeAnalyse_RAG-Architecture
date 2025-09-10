@@ -6,24 +6,28 @@ from langchain_community.document_loaders import PyPDFLoader
 import chromadb
 
 class ChromaDBManager:
-    def __init__(self, db_path: str = "resume_chroma_db"):
-        if not os.path.exists(db_path):
-            os.makedirs(db_path)
-        self.client = chromadb.PersistentClient(path=db_path)
+    def __init__(self, db_path: str = "resume_chroma_db", collection_name: str = "resumes", sections_collection_name: str = "resume_sections", in_memory: bool = False):
+        if in_memory:
+            self.client = chromadb.Client()
+        else:
+            if not os.path.exists(db_path):
+                os.makedirs(db_path)
+            self.client = chromadb.PersistentClient(path=db_path)
 
-        # Full-resume collection (for compatibility with main.py)
+        # Full-resume collection
         self.collection = self.client.get_or_create_collection(
-            name="resumes",
+            name=collection_name,
             embedding_function=None
         )
 
-        # Section-level collection (for fine-grained matching)
+        # Section-level collection
         self.sections_collection = self.client.get_or_create_collection(
-            name="resume_sections",
+            name=sections_collection_name,
             embedding_function=None
         )
 
-        print(f"ChromaDB initialized at {db_path}")
+        if not in_memory:
+            print(f"ChromaDB initialized at {db_path}")
 
     def add_record(self, db_record: Dict[str, Any]):
         """Add both full resume and its sections into ChromaDB"""

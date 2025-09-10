@@ -89,8 +89,126 @@ cd RAG
 
 2. Create and activate virtual environment:
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+# Resume Analysis and Matching System 📄✨
+
+A sophisticated resume analysis and matching system that uses RAG (Retrieval Augmented Generation) to match resumes with job descriptions intelligently.
+
+## 🌟 Features
+
+- 📝 **Multi-Format Support**: Process resumes in PDF and Word formats.
+- 🔍 **Advanced Text Extraction**: OCR capabilities for scanned documents.
+- 🧠 **Intelligent Matching**: Uses embeddings and semantic search to find the best candidates.
+- 💾 **Vector Database**: ChromaDB for efficient similarity search and storage.
+- 🤖 **AI Enhancement**: Mistral AI for advanced analysis and summarization.
+- 📊 **Structured Output**: JSON format for analysis results.
+- 🖥️ **Interactive Web UI**: A React-based frontend for a user-friendly experience.
+
+## 🖥️ Web Frontend
+
+The project includes a modern and interactive web-based user interface built with React, TypeScript, and Vite.
+
+### Frontend Features
+
+-   **Resume Matching Dashboard**: Upload a job description and see the top matching resumes.
+-   **Detailed Match View**: For each matched resume, view details like:
+    -   Resume file name.
+    -   The section that matched best (e.g., "experience", "skills").
+    -   A similarity score.
+    -   The relevant text from the resume that matched the job description.
+-   **AI Summary Display**: Shows an AI-generated summary of the top matches. It gracefully handles and displays errors if the summary generation fails (e.g., if the AI model is not available).
+-   **User-Friendly Interface**: Built with modern UI components for a smooth experience.
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Python 3.10 or higher
+- Node.js and npm (or yarn/pnpm)
+- Tesseract OCR (for scanned documents)
+- Ollama with Mistral AI model (for enhanced analysis)
+
+### Installation
+
+1.  **Clone the repository**:
+    ```bash
+    git clone <repository-url>
+    cd RAG
+    ```
+
+2.  **Backend Setup**:
+    ```bash
+    # Create and activate virtual environment
+    python -m venv .venv
+    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+    
+    # Install Python dependencies
+    pip install -r requirements.txt
+    ```
+
+3.  **Frontend Setup**:
+    ```bash
+    # Navigate to the web directory
+    cd web
+    
+    # Install Node.js dependencies
+    npm install
+    ```
+
+4.  **Tesseract OCR** (Optional - for scanned documents):
+    -   macOS: `brew install tesseract`
+    -   Linux: `sudo apt-get install tesseract-ocr`
+    -   Windows: Download installer from GitHub
+
+5.  **Mistral AI Setup** (Optional - for enhanced analysis):
+    -   [Install Ollama](https://ollama.ai)
+    -   Pull the Mistral model: `ollama pull mistral`
+
+## 🎯 Usage
+
+To run the application, you need to start both the backend server and the frontend development server.
+
+1.  **Start the Backend Server**:
+    From the project root directory (`RAG/`):
+    ```bash
+    uvicorn api:app --reload
+    ```
+    The API will be available at `http://127.0.0.1:8000`.
+
+2.  **Start the Frontend Server**:
+    In a new terminal, navigate to the `web/` directory:
+    ```bash
+    cd web
+    npm run dev
+    ```
+    The web application will be available at `http://localhost:5173` (or another port if 5173 is busy).
+
+3.  **Using the Application**:
+    -   Open your browser to the frontend URL.
+    -   Use the dashboard to upload a job description and see the matching resumes.
+
+### Command-Line Usage (Alternative)
+
+You can also use the system from the command line for indexing and matching.
+
+1.  **Index Resumes**:
+    ```bash
+    python main.py --index DATA_resume/
+    ```
+
+2.  **Match with Job Description**:
+    ```bash
+    python main.py --job JOB_DESCRIPTIONS/job.pdf -n 5
+    ```
+
+## 🔧 Components
+
+-   **Backend**: FastAPI, ChromaDB, SentenceTransformers
+-   **Frontend**: React, TypeScript, Vite, Tailwind CSS, shadcn/ui
+-   **AI**: Ollama, Mistral
+
+---
+Built with ❤️ for making recruitment smarter
+
 ```
 
 3. Install dependencies:
