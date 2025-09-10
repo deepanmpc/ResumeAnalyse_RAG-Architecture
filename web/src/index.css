@@ -1,0 +1,213 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Futuristic Dark Theme */
+    --background: 240 6% 8%;
+    --foreground: 0 0% 98%;
+
+    /* Glass Cards */
+    --card: 240 6% 10%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 6% 12%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Neon Electric Blue Primary */
+    --primary: 220 100% 60%;
+    --primary-foreground: 240 6% 8%;
+
+    /* Violet Secondary */
+    --secondary: 270 95% 65%;
+    --secondary-foreground: 0 0% 98%;
+
+    /* Muted Glass Effect */
+    --muted: 240 6% 15%;
+    --muted-foreground: 0 0% 70%;
+
+    /* Teal Accent */
+    --accent: 180 100% 50%;
+    --accent-foreground: 240 6% 8%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Glass Borders */
+    --border: 240 6% 20%;
+    --input: 240 6% 15%;
+    --ring: 220 100% 60%;
+
+    --radius: 1rem;
+
+    /* Custom Futuristic Colors */
+    --electric-blue: 220 100% 60%;
+    --neon-violet: 270 95% 65%;
+    --cyber-teal: 180 100% 50%;
+    --neon-pink: 320 100% 70%;
+    --glass-bg: 240 6% 10%;
+    --glass-border: 240 6% 20%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(220, 100%, 60%), hsl(270, 95%, 65%));
+    --gradient-secondary: linear-gradient(135deg, hsl(180, 100%, 50%), hsl(320, 100%, 70%));
+    --gradient-hero: linear-gradient(135deg, hsl(220, 100%, 60%) 0%, hsl(270, 95%, 65%) 50%, hsl(180, 100%, 50%) 100%);
+    --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+
+    /* Glow Effects */
+    --glow-primary: 0 0 20px hsl(220, 100%, 60%);
+    --glow-secondary: 0 0 20px hsl(270, 95%, 65%);
+    --glow-accent: 0 0 20px hsl(180, 100%, 50%);
+
+    --sidebar-background: 240 6% 8%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 220 100% 60%;
+    --sidebar-primary-foreground: 240 6% 8%;
+    --sidebar-accent: 240 6% 15%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 6% 20%;
+    --sidebar-ring: 220 100% 60%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  /* Glass Components */
+  .glass-card {
+    @apply backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 border border-white/20 rounded-2xl;
+  }
+
+  .glass-button {
+    @apply backdrop-blur-md bg-gradient-to-r from-primary/20 to-secondary/20 border border-primary/30 rounded-xl hover:from-primary/30 hover:to-secondary/30 hover:border-primary/50 transition-all duration-300;
+  }
+
+  .neon-glow {
+    @apply shadow-[0_0_20px_hsl(var(--primary))] hover:shadow-[0_0_40px_hsl(var(--primary))] transition-all duration-300;
+  }
+
+  .hero-text {
+    @apply bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.8s ease-out;
+  }
+
+  .scroll-reveal {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .scroll-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer utilities {
+  .text-gradient-primary {
+    @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+  }
+
+  .text-gradient-accent {
+    @apply bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent;
+  }
+
+  .bg-gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .bg-gradient-glass {
+    background: var(--gradient-glass);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 20px hsl(var(--primary));
+  }
+  to {
+    box-shadow: 0 0 40px hsl(var(--primary)), 0 0 60px hsl(var(--secondary));
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
