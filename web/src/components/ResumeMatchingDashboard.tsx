@@ -7,11 +7,37 @@ import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-const ResumeMatchingDashboard = () => {
+const ResumeMatchingDashboard = ({ setError }) => {
   const [topN, setTopN] = useState("5");
   const [customTopN, setCustomTopN] = useState("");
+
+  const handleChat = async (resumeId: string) => {
+    console.log(`Chat button clicked for resume ID: ${resumeId}`);
+
+    try {
+      // 1. Retrieve the full resume text embeddings from the API
+      const response = await fetch(`http://localhost:8000/api/resume-embedding/${resumeId}`);
+      if (!response.ok) {
+        throw new Error(`Failed to retrieve resume embedding: ${response.status}`);
+      }
+      const data = await response.json();
+      const resumeEmbedding = data.embedding;
+
+      // 2. Send the embeddings to SLM_manager/augemented_generation.py as a JSON file
+      // TODO: Implement the logic to send the embeddings to SLM_manager/augemented_generation.py
+      // This might involve creating a new API endpoint or using an existing one
+
+      // 3. Display the summarized information in the AI chatbot section
+      // TODO: Implement the logic to display the summarized information in the AI chatbot section
+
+      console.log("Resume embedding:", resumeEmbedding);
+    } catch (error: any) {
+      console.error("Error handling chat:", error);
+      setError(error.message || "An unknown error occurred while handling chat.");
+    }
+  };
+
   const [threshold, setThreshold] = useState([75]);
   const [previewMode, setPreviewMode] = useState(true);
   const [jobDescription, setJobDescription] = useState<File | null>(null);
@@ -20,7 +46,6 @@ const ResumeMatchingDashboard = () => {
   const [analysisComplete, setAnalysisComplete] = useState(false);
   const [analysisResults, setAnalysisResults] = useState<any[]>([]);
   const [aiSummary, setAiSummary] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   const handleJobDescriptionUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -298,15 +323,6 @@ const ResumeMatchingDashboard = () => {
           </Button>
         </motion.div>
 
-        {error && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <Alert variant="destructive" className="glass-card">
-              <AlertTitle>Analysis Failed</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          </motion.div>
-        )}
-
         {analysisComplete && (
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -378,13 +394,20 @@ const ResumeMatchingDashboard = () => {
                                   className="px-3 py-1 bg-primary/20 text-primary rounded-full text-sm border border-primary/30"
                                 >
                                   {skill}
-                                </span>
-                              ))}
+                                 </span>
+                               ))}
                             </div>
-                            
+                            <Button
+                              variant="outline"
+                              className="glass-card border-secondary/30 hover:border-secondary/50 px-6 py-2"
+                              onClick={() => handleChat(candidate.id)}
+                            >
+                              Chat
+                            </Button>
                           </div>
 
                           <div className="flex flex-col items-center gap-2">
+
                             <div className="relative w-16 h-16">
                               <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
                                 <path

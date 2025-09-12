@@ -2,7 +2,11 @@
 
 import os
 import re
+import subprocess
+import json
 import shutil
+import subprocess
+import json
 import tempfile
 import uvicorn
 import ollama
@@ -240,7 +244,52 @@ async def index_resumes_endpoint(resumes_path: str = "DATA_resume"):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Indexing failed: {e}")
 
+@app.get("/api/resume-embedding/{resume_id}", tags=["Resumes"])
+async def get_resume_embedding(resume_id: str):
+    """Retrieve the full resume text embedding given a resume ID."""
+    embedding = main_chroma_manager.get_resume_embedding(resume_id)
+    if not embedding:
+        raise HTTPException(status_code=404, detail=f"Resume with ID '{resume_id}' not found.")
+    return {"embedding": embedding}
+
+@app.post("/api/summarize-resume", tags=["Resumes"])
+async def summarize_resume(resume_embedding: dict, job_description: str):
+    """Summarize the resume information using the LLM."""
+    try:
+        # Create a temporary file to store the resume embedding
+        with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".json") as f:
+            json.dump(resume_embedding, f)
+            temp_file_path = f.name
+
+        # Run the SLM_manager/augemented_generation.py script with the temporary file
+        command = [
+            "python",
+            "/Users/deepandee/Desktop/RAG/SLM_manager/augemented_generation.py",
+            "--resume_file",
+            temp_file_path,
+            "--job_description",
+            job_description,
+        ]
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
+
+        # Check for errors
+        if stderr:
+            print(f"Error summarizing resume: {stderr.decode()}")
+            raise HTTPException(status_code=500, detail=f"Error summarizing resume: {stderr.decode()}")
+
+        # Extract the summary from the output
+        summary = stdout.decode().strip()
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        # Clean up the temporary file
+        os.remove(temp_file_path)
+
+    return {"summary": summary}
 
 # --- Server Startup ---
 if __name__ == "__main__":
+
     uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)

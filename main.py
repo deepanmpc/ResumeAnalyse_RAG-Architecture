@@ -119,7 +119,7 @@ def summarize_matches_with_llm(job_text: str, matches: dict):
         print("--- AI Summary ---")
         print(response['message']['content'])
     except Exception as e:
-        print(f"\n⚠️ Could not generate summary. Ensure Ollama is running and the 'mistral' model is installed.")
+        print(f"\n⚠️ Could not generate summary. Ensure Ollama is running and the 'mistral:instruct' model is installed.")
         print(f"Error: {e}")
 
 

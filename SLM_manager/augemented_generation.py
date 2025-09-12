@@ -1,3 +1,6 @@
+import argparse
+import json
+from typing import List
 from CHROMA_DB.collections import ChromaDBManager, load_job_description_pdf
 from sentence_transformers import SentenceTransformer
 from langchain_community.llms import Ollama
@@ -7,34 +10,49 @@ embedding_model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 chroma_manager = ChromaDBManager()
 llm = Ollama(model="mistral:instruct", temperature=0.7)
 
-# Query job description
-job_path = "/Users/deepandee/Desktop/RAG/JOB_DESCRIPTIONS/online_exam_developer_job.pdf"
-job_text = load_job_description_pdf(job_path)
-job_emb = embedding_model.encode(job_text).tolist()
+def summarize_resume(resume_embedding: List[float], job_text: str):
+    """Summarize the resume information using the LLM."""
+    prompt = f"""
+    You are an expert HR assistant. Your task is to analyze the following resume and provide a summary of the candidate's qualifications, key strengths and gaps, and overall ranking for the given job description.
 
-matches = chroma_manager.query(job_text, job_emb, top_k=10, min_similarity=0.1)
+    **Job Description:**
+    {job_text}
 
-# Deduplicate matches
-seen = set()
-unique_matches = []
-for m in matches['matches']:
-    key = (m['resume_id'], m['section_name'])
-    if key not in seen:
-        seen.add(key)
-        unique_matches.append(m)
+    **Resume:**
+    {resume_embedding}
 
-# Prepare prompt for LLM
-prompt = f"""
-Summarize the following unique candidate matches for the job:
+    **Your Task:**
+    Based on the job description and the provided resume, write a concise summary of the candidate's qualifications, key strengths and gaps, and overall ranking.
+    """
 
-{unique_matches}
+    summary = llm.invoke(prompt)
+    return summary
 
-For each candidate, provide:
-1. Qualifications summary
-2. Key strengths and gaps
-3. Overall ranking
-"""
+def main():
+    parser = argparse.ArgumentParser(description="Summarize resume information using LLM.")
+    parser.add_argument("--resume_file", type=str, help="Path to the JSON file containing the resume embeddings.")
+    parser.add_argument("--job_description", type=str, help="Job description")
+    args = parser.parse_args()
 
-summary = llm.invoke(prompt)
-print("\n--- LLM Summary ---")
-print(summary)
+    if not args.resume_file:
+        print("Please provide the path to the JSON file containing the resume embeddings.")
+        return
+
+    if not args.job_description:
+        print("Please provide the job description.")
+        return
+
+    try:
+        with open(args.resume_file, "r") as f:
+            resume_data = json.load(f)
+            resume_embedding = resume_data["embedding"]
+    except Exception as e:
+        print(f"Error loading resume file: {e}")
+        return
+
+    summary = summarize_resume(resume_embedding, args.job_description)
+    print("\n--- LLM Summary ---")
+    print(summary)
+
+if __name__ == "__main__":
+    main()

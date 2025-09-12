@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import HeroSection from '@/components/HeroSection';
 import InstallationSection from '@/components/InstallationSection';
 import ResumeMatchingDashboard from '@/components/ResumeMatchingDashboard';
@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import FloatingChatBot from '@/components/FloatingChatBot';
 
 const Index = () => {
+  const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     window.scrollTo(0, 0); // Scroll to the top on component mount
     // Smooth scroll behavior for anchor links
@@ -33,8 +34,8 @@ const Index = () => {
     <div className="min-h-screen bg-background overflow-x-hidden">
       <HeroSection />
       <InstallationSection />
-      <ResumeMatchingDashboard />
-      <ChatbotSection />
+      <ResumeMatchingDashboard error={error} setError={setError} />
+      <ChatbotSection error={error} setError={setError} />
       <Footer />
       <FloatingChatBot />
     </div>

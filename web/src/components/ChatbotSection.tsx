@@ -13,7 +13,7 @@ interface Message {
   timestamp: Date;
 }
 
-const ChatbotSection = () => {
+const ChatbotSection = ({ error, setError }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -37,6 +37,19 @@ const ChatbotSection = () => {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  useEffect(() => {
+    if (error) {
+      const errorMessage: Message = {
+        id: messages.length + 1,
+        text: `⚠️ Error: ${error}`,
+        isBot: true,
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, errorMessage]);
+      setError(null);
+    }
+  }, [error, setError, messages.length]);
 
   useEffect(() => {
     scrollToBottom();

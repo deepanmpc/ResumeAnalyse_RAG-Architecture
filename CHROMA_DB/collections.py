@@ -119,6 +119,18 @@ class ChromaDBManager:
             "query": query_text
         }
 
+    def get_resume_embedding(self, resume_id: str) -> List[float]:
+        """Retrieve the full resume text embedding given a resume ID."""
+        results = self.collection.get(
+            ids=[resume_id],
+            include=['embeddings']
+        )
+
+        if not results or not results.get("embeddings") or not results["embeddings"][0]:
+            return None
+
+        return results["embeddings"][0]
+
 
 def load_job_description_pdf(file_path: str) -> str:
     """Extracts text from a job description PDF"""
