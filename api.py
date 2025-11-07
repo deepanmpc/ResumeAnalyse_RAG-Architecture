@@ -5,13 +5,14 @@ import re
 import subprocess
 import json
 import shutil
-import subprocess
-import json
 import tempfile
 import uvicorn
 import ollama
+import requests
+from dotenv import load_dotenv
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer
 from typing import List
 
@@ -28,6 +29,9 @@ model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 print("Model loaded.")
 main_chroma_manager = ChromaDBManager()
 
+# Load Gemini API key from .env
+load_dotenv()
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 app = FastAPI(
     title="Resume Analysis and Matching System",
@@ -44,7 +48,31 @@ app.add_middleware(
 )
 
 
+# --- Pydantic Models ---
+
+class ChurnExplanationRequest(BaseModel):
+    prompt: str
+
+
 # --- Business Logic ---
+
+def call_gemini_for_explanation(prompt: str, api_key: str) -> str:
+    """Send prompt to Gemini API for churn driver summarization."""
+    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
+    headers = {"Content-Type": "application/json"}
+    data = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {"temperature": 0.7, "maxOutputTokens": 512},
+    }
+    params = {"key": api_key}
+    try:
+        response = requests.post(url, headers=headers, params=params, json=data, timeout=30)
+        response.raise_for_status()
+        result = response.json()
+        return result["candidates"][0]["content"]["parts"][0]["text"]
+    except Exception as e:
+        return f"Gemini API error: {e}"
+
 
 def extract_structured_data(resume_text: str) -> dict:
     """
@@ -136,6 +164,15 @@ def summarize_matches_with_llm_api(job_text: str, matches: dict) -> str:
 async def get_status():
     """A simple endpoint to confirm the API is running."""
     return {"status": "ok", "message": "API is running."}
+
+
+@app.post("/api/explain-churn", tags=["Churn"])
+async def explain_churn(request: ChurnExplanationRequest):
+    """Explain churn using Gemini."""
+    if not GEMINI_API_KEY:
+        raise HTTPException(status_code=500, detail="Gemini API key not configured.")
+    explanation = call_gemini_for_explanation(request.prompt, GEMINI_API_KEY)
+    return {"explanation": explanation}
 
 
 @app.post("/api/match-resumes", tags=["Matching"])

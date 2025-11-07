@@ -17,13 +17,15 @@ class ChromaDBManager:
         # Full-resume collection
         self.collection = self.client.get_or_create_collection(
             name=collection_name,
-            embedding_function=None
+            embedding_function=None,
+            metadata={"hnsw:space": "cosine"}
         )
 
         # Section-level collection
         self.sections_collection = self.client.get_or_create_collection(
             name=sections_collection_name,
-            embedding_function=None
+            embedding_function=None,
+            metadata={"hnsw:space": "cosine"}
         )
 
         if not in_memory:
