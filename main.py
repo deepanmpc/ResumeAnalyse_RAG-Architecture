@@ -159,6 +159,7 @@ def main():
             f"Customer {row.customer_id} summary: {row.summary}\n"
             f"Churn probability: {row.churn_probability:.2f}\n"
             f"Explain the likely drivers of churn for this customer in bullet points."
+            
         )
         gemini_summary = call_gemini_for_explanation(prompt, api_key)
         print(f"[{i}] Gemini Summary:\n{gemini_summary}\n")
