@@ -4,10 +4,8 @@ Handles document indexing, searching, and job matching operations.
 """
 
 import os
-import sys
 import argparse
 import json
-import ollama
 from typing import List, Tuple
 from pathlib import Path
 
@@ -89,28 +87,29 @@ def summarize_matches_with_llm(job_text: str, matches: dict):
     """
     print("\n\n🤖 Generating AI Summary for Top Matches...")
 
-    # Prepare the context from the top matches
-    context = ""
-    for i, (fname, match) in enumerate(matches.items(), 1):
-        context += f"--- Resume {i}: {fname} ---\n"
-        context += f"Relevance: {match['match_percentage']}%\n"
-        context += f"Matching Section ({match['section_name']}):\n{match['text']}\n\n"
-
-    # Create the prompt for the LLM
-    prompt = f"""
-    You are an expert HR assistant. Your task is to analyze the following resumes and provide a summary of why they are a good fit for the given job description.
-
-    **Job Description:**
-    {job_text}
-
-    **Top Matching Resumes:**
-    {context}
-
-    **Your Task:**
-    Based on the job description and the provided resume snippets, write a concise summary for each of the top 2-3 candidates. Highlight their key qualifications, relevant experience, and skills that align with the job requirements. Keep it brief and to the point.
-    """
-
     try:
+        import ollama
+        # Prepare the context from the top matches
+        context = ""
+        for i, (fname, match) in enumerate(matches.items(), 1):
+            context += f"--- Resume {i}: {fname} ---\n"
+            context += f"Relevance: {match['match_percentage']}%\n"
+            context += f"Matching Section ({match['section_name']}):\n{match['text']}\n\n"
+
+        # Create the prompt for the LLM
+        prompt = f"""
+        You are an expert HR assistant. Your task is to analyze the following resumes and provide a summary of why they are a good fit for the given job description.
+
+        **Job Description:**
+        {job_text}
+
+        **Top Matching Resumes:**
+        {context}
+
+        **Your Task:**
+        Based on the job description and the provided resume snippets, write a concise summary for each of the top 2-3 candidates. Highlight their key qualifications, relevant experience, and skills that align with the job requirements. Keep it brief and to the point.
+        """
+
         response = ollama.chat(
             #model='mistral:instruct',
             model='mistral',
@@ -118,8 +117,11 @@ def summarize_matches_with_llm(job_text: str, matches: dict):
         )
         print("--- AI Summary ---")
         print(response['message']['content'])
+    except (ImportError, ModuleNotFoundError):
+        print("\n⚠️ Ollama is not installed. Skipping AI summary.")
+        print("To enable summaries, run: pip install ollama")
     except Exception as e:
-        print(f"\n⚠️ Could not generate summary. Ensure Ollama is running and the 'mistral:instruct' model is installed.")
+        print(f"\n⚠️ Could not generate summary. Ensure Ollama is running and the 'mistral' model is installed.")
         print(f"Error: {e}")
 
 
@@ -154,17 +156,23 @@ def main():
             print(job_text[:500] + "..." if len(job_text) > 500 else job_text)
             print("\n=== Finding Matching Resumes ===")
 
+
             results = chroma_manager.query(
                 query_text=job_text,
                 query_embedding=job_embedding,
                 top_k=args.n_results,
-                min_similarity=0.1,
+                min_similarity=0.0,  # Lower threshold for debug
             )
 
+            # Debug: Print all section matches and their similarity scores
+            print("\n--- Debug: All Section Matches and Similarity Scores ---")
             if results and results.get("matches"):
+                for i, match in enumerate(results["matches"], 1):
+                    print(f"[{i}] Resume: {match['filename']} | Section: {match['section_name']} | Score: {match['match_percentage']}% | Text: {match['text'][:100]}...")
+
                 # Deduplicate by resume_id (pick best section per resume)
                 best_matches = {}
-                for match in results["matches"]: # Group by filename
+                for match in results["matches"]:
                     fname = match["filename"]
                     if fname not in best_matches or match["match_percentage"] > best_matches[fname]["match_percentage"]:
                         best_matches[fname] = match
@@ -181,7 +189,6 @@ def main():
                 # Show average scores too (ranking by full resume similarity)
                 if results.get("resume_scores"):
                     print("\n--- 📊 Overall Resume Scores ---")
-                    # We need to map resume_id scores to filenames
                     filename_scores = {match['filename']: results['resume_scores'].get(match['resume_id'], 0) for match in best_matches.values()}
                     for fname, score in sorted(filename_scores.items(), key=lambda x: x[1], reverse=True):
                         print(f"{fname}: {score}%")
@@ -196,7 +203,7 @@ def main():
                 summarize_matches_with_llm(job_text, best_matches)
 
             else:
-                print("No matching resumes found.")
+                print("No section matches found at any similarity score.")
 
         except Exception as e:
             print(f"Error processing job description: {e}")

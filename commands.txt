@@ -1,0 +1,6 @@
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+
+python3 main.py --index /Users/deepandee/Desktop/ResumeAnalyse_RAG-Architecture/DATA_resume --job /Users/deepandee/Desktop/ResumeAnalyse_RAG-Architecture/JOB_DESCRIPTIONS/job_description.pdf -n 10
