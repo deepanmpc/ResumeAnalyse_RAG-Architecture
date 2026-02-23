@@ -73,6 +73,8 @@ test_sample.txt
 !ARCHITECTURE/
 !DATA_resume/example_resume.pdf
 !DATA_resume/instructions.txt
+!JOB_DESCRIPTIONS/instructions.txt
+
 !JOB_DESCRIPTIONS/example_job.pdf
 
 # Local development
