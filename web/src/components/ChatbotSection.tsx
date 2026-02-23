@@ -13,7 +13,7 @@ interface Message {
   timestamp: Date;
 }
 
-const ChatbotSection = ({ error, setError }) => {
+const ChatbotSection = ({ error, setError, context }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -25,14 +25,6 @@ const ChatbotSection = ({ error, setError }) => {
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const mockResponses = [
-    "Alex Chen shows exceptional expertise in machine learning with 5+ years of experience in Python and React. His background includes developing AI-powered applications and implementing scalable ML pipelines.",
-    "Sarah Johnson demonstrates strong data science capabilities with proficiency in TensorFlow, SQL, and data visualization. She has led multiple analytics projects and excels in statistical modeling.",
-    "Based on the uploaded resumes, the top candidates for this ML Engineer position are Alex Chen (92% match), Sarah Johnson (88% match), and Michael Rodriguez (85% match). Would you like detailed insights on any specific candidate?",
-    "The skill gap analysis shows that most candidates have strong technical foundations, but may benefit from additional experience in cloud deployment and MLOps practices.",
-    "I can help you analyze candidate qualifications, compare skill sets, generate summaries, or provide insights on the best matches for your requirements."
-  ];
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -55,24 +47,6 @@ const ChatbotSection = ({ error, setError }) => {
     scrollToBottom();
   }, [messages]);
 
-  const simulateTyping = async (response: string) => {
-    setIsTyping(true);
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
-    
-    setIsTyping(false);
-    
-    const newMessage: Message = {
-      id: messages.length + 1,
-      text: response,
-      isBot: true,
-      timestamp: new Date()
-    };
-    
-    setMessages(prev => [...prev, newMessage]);
-  };
-
   const handleSendMessage = async () => {
     if (!inputText.trim()) return;
 
@@ -83,12 +57,52 @@ const ChatbotSection = ({ error, setError }) => {
       timestamp: new Date()
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
     setInputText('');
+    setIsTyping(true);
 
-    // Simulate bot response
-    const randomResponse = mockResponses[Math.floor(Math.random() * mockResponses.length)];
-    await simulateTyping(randomResponse);
+    // Prepare message history for the backend
+    const messageHistory = newMessages.map(msg => ({
+      role: msg.isBot ? 'assistant' : 'user',
+      content: msg.text
+    }));
+
+    try {
+      const response = await fetch('http://localhost:8000/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ messages: messageHistory, context: context }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get response from AI');
+      }
+
+      const data = await response.json();
+      
+      const botMessage: Message = {
+        id: messages.length + 2,
+        text: data.response,
+        isBot: true,
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, botMessage]);
+    } catch (err) {
+      const errorMessage: Message = {
+        id: messages.length + 2,
+        text: "Sorry, I encountered an error while processing your request. Please try again.",
+        isBot: true,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+      console.error(err);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

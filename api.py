@@ -104,12 +104,19 @@ def summarize_matches_with_llm_api(job_text: str, matches: dict) -> str:
     {context}
 
     **Your Task:**
-    Based on the job description and the provided resume snippets, write a concise summary for each of the top 2-3 candidates. Highlight their key qualifications, relevant experience, and skills that align with the job requirements. Keep it brief and to the point.
+    Based on the job description and the provided resume snippets, write a concise summary for each of the top 2-3 candidates.
+    
+    **Guidelines:**
+    - Highlight their key qualifications, relevant experience, and skills that align with the job requirements.
+    - Use bullet points for readability.
+    - Structure your response clearly.
+    - Keep it brief, professional, and to the point.
     """
 
     try:
         response = ollama.chat(
-            model='mistral',
+            model='qwen2.5:0.5b',
+            #model='mistral:instruct',
             messages=[{'role': 'user', 'content': prompt}]
         )
         summary_content = response['message']['content']
@@ -125,9 +132,49 @@ def summarize_matches_with_llm_api(job_text: str, matches: dict) -> str:
         
         return "\n".join(cleaned_lines)
     except Exception as e:
-        error_message = f"⚠️ Could not generate AI summary. Ensure the 'mistral' model is available in Ollama.\nError: {e}"
+        error_message = f"⚠️ Could not generate AI summary. Ensure the 'qwen2.5:0.5b' model is available in Ollama.\nError: {e}"
         print(error_message)
         return error_message
+
+
+from pydantic import BaseModel
+
+class ChatRequest(BaseModel):
+    messages: List[dict]
+    context: str = None # Optional context
+
+@app.post("/api/chat", tags=["Chat"])
+async def chat_endpoint(request: ChatRequest):
+    """
+    Endpoint for general chat using the local Ollama model.
+    """
+    try:
+        messages = request.messages
+        if request.context:
+            # Prepend context as a system message
+            system_msg = {
+                "role": "system",
+                "content": (
+                    f"You are an expert HR assistant. Your goal is to provide clear, concise, and structured answers based on the provided context.\n"
+                    f"Context:\n{request.context}\n\n"
+                    f"Guidelines for your response:\n"
+                    f"- Use bullet points (•) for lists, comparisons, or key takeaways.\n"
+                    f"- Use emojis to make the response engaging and readable (e.g., ✅ for strengths, ⚠️ for gaps, 💼 for experience, 💡 for insights).\n"
+                    f"- Keep paragraphs short and use line breaks between points.\n"
+                    f"- If comparing candidates, use a structured format (e.g., Candidate A vs. Candidate B).\n"
+                    f"- Be professional and direct.\n"
+                    f"Answer the user's question based on the above context."
+                )
+            }
+            messages.insert(0, system_msg)
+
+        response = ollama.chat(
+            model='qwen2.5:0.5b',
+            messages=messages
+        )
+        return {"response": response['message']['content']}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # --- API Endpoints ---
@@ -213,6 +260,7 @@ async def match_resumes(
                 match['name'] = structured_data['name'] # Add extracted name
                 match['skills'] = structured_data['skills']
                 match['experience'] = structured_data['experience']
+                match['full_text'] = full_resume_text # Add full text for context
                 best_matches[fname] = match
         
         sorted_matches = dict(sorted(best_matches.items(), key=lambda item: item[1]['match_percentage'], reverse=True))

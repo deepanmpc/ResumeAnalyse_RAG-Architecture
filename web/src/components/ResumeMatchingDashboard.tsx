@@ -8,33 +8,26 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 
-const ResumeMatchingDashboard = ({ setError }) => {
+const ResumeMatchingDashboard = ({ setError, setAnalysisContext }) => {
   const [topN, setTopN] = useState("5");
   const [customTopN, setCustomTopN] = useState("");
 
   const handleChat = async (resumeId: string) => {
     console.log(`Chat button clicked for resume ID: ${resumeId}`);
-
-    try {
-      // 1. Retrieve the full resume text embeddings from the API
-      const response = await fetch(`http://localhost:8000/api/resume-embedding/${resumeId}`);
-      if (!response.ok) {
-        throw new Error(`Failed to retrieve resume embedding: ${response.status}`);
-      }
-      const data = await response.json();
-      const resumeEmbedding = data.embedding;
-
-      // 2. Send the embeddings to SLM_manager/augemented_generation.py as a JSON file
-      // TODO: Implement the logic to send the embeddings to SLM_manager/augemented_generation.py
-      // This might involve creating a new API endpoint or using an existing one
-
-      // 3. Display the summarized information in the AI chatbot section
-      // TODO: Implement the logic to display the summarized information in the AI chatbot section
-
-      console.log("Resume embedding:", resumeEmbedding);
-    } catch (error: any) {
-      console.error("Error handling chat:", error);
-      setError(error.message || "An unknown error occurred while handling chat.");
+    
+    const candidate = analysisResults.find(r => r.id === resumeId);
+    if (candidate) {
+      const context = `
+      Focus on this candidate:
+      Name: ${candidate.name}
+      Experience: ${candidate.experience}
+      Skills: ${candidate.skills.join(', ')}
+      Resume Content: ${candidate.full_text || candidate.highlight}
+      `;
+      setAnalysisContext(context);
+      
+      const chatSection = document.getElementById('chatbot');
+      chatSection?.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -100,11 +93,28 @@ const ResumeMatchingDashboard = ({ setError }) => {
         score: Math.round(matchData.match_percentage),
         experience: matchData.experience,
         highlight: matchData.text,
+        full_text: matchData.full_text,
         skills: matchData.skills,
       }));
 
       setAnalysisResults(formattedResults);
       setAiSummary(data.summary);
+      
+      // Create a global context for the chatbot
+      const topCandidates = formattedResults.slice(0, 5);
+      const globalContext = `
+      Job Description: ${jobDescription?.name} (Content not fully available here, infer from matches).
+      
+      Top Candidates Summary:
+      ${topCandidates.map((c, i) => `
+      ${i+1}. ${c.name} (Score: ${c.score}%)
+      Experience: ${c.experience}
+      Skills: ${c.skills.join(', ')}
+      Highlight: ${c.highlight}
+      `).join('\n')}
+      `;
+      setAnalysisContext(globalContext);
+
       setAnalysisComplete(true);
 
     } catch (e: any) {

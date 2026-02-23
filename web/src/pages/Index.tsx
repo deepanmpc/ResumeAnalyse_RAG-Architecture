@@ -8,6 +8,8 @@ import FloatingChatBot from '@/components/FloatingChatBot';
 
 const Index = () => {
   const [error, setError] = useState<string | null>(null);
+  const [analysisContext, setAnalysisContext] = useState<string | null>(null);
+
   useEffect(() => {
     window.scrollTo(0, 0); // Scroll to the top on component mount
     // Smooth scroll behavior for anchor links
@@ -34,8 +36,8 @@ const Index = () => {
     <div className="min-h-screen bg-background overflow-x-hidden">
       <HeroSection />
       <InstallationSection />
-      <ResumeMatchingDashboard error={error} setError={setError} />
-      <ChatbotSection error={error} setError={setError} />
+      <ResumeMatchingDashboard error={error} setError={setError} setAnalysisContext={setAnalysisContext} />
+      <ChatbotSection error={error} setError={setError} context={analysisContext} />
       <Footer />
       <FloatingChatBot />
     </div>

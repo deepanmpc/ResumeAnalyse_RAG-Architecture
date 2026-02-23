@@ -8,7 +8,7 @@ from langchain_community.llms import Ollama
 # Initialize
 embedding_model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 chroma_manager = ChromaDBManager()
-llm = Ollama(model="mistral:instruct", temperature=0.7)
+llm = Ollama(model="qwen2.5:0.5b", temperature=0.7)
 
 def summarize_resume(resume_embedding: List[float], job_text: str):
     """Summarize the resume information using the LLM."""
@@ -23,6 +23,11 @@ def summarize_resume(resume_embedding: List[float], job_text: str):
 
     **Your Task:**
     Based on the job description and the provided resume, write a concise summary of the candidate's qualifications, key strengths and gaps, and overall ranking.
+    
+    **Guidelines:**
+    - Use bullet points for key strengths and qualifications.
+    - Clearly identify any skill gaps.
+    - Provide a professional and structured assessment.
     """
 
     summary = llm.invoke(prompt)

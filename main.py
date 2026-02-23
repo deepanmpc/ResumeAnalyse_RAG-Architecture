@@ -99,7 +99,6 @@ def summarize_matches_with_llm(job_text: str, matches: dict):
         # Create the prompt for the LLM
         prompt = f"""
         You are an expert HR assistant. Your task is to analyze the following resumes and provide a summary of why they are a good fit for the given job description.
-
         **Job Description:**
         {job_text}
 
@@ -111,8 +110,8 @@ def summarize_matches_with_llm(job_text: str, matches: dict):
         """
 
         response = ollama.chat(
-            #model='mistral:instruct',
-            model='mistral',
+            model='qwen2.5:0.5b',
+            #model='mistral',
             messages=[{'role': 'user', 'content': prompt}]
         )
         print("--- AI Summary ---")
@@ -121,7 +120,7 @@ def summarize_matches_with_llm(job_text: str, matches: dict):
         print("\n⚠️ Ollama is not installed. Skipping AI summary.")
         print("To enable summaries, run: pip install ollama")
     except Exception as e:
-        print(f"\n⚠️ Could not generate summary. Ensure Ollama is running and the 'mistral' model is installed.")
+        print(f"\n⚠️ Could not generate summary. Ensure Ollama is running and the 'qwen2.5:0.5b' model is installed.")
         print(f"Error: {e}")
 
 
@@ -177,31 +176,42 @@ def main():
                     if fname not in best_matches or match["match_percentage"] > best_matches[fname]["match_percentage"]:
                         best_matches[fname] = match
 
-                print(f"\n📊 Found {len(best_matches)} unique matching resumes:")
+                print("\n" + "="*50)
+                print("Matching Results:")
+                print("  The system now ranks the candidates as follows:\n")
+                
+                rank_emojis = ["🥇", "🥈", "🥉"]
+                
                 for i, (fname, match) in enumerate(best_matches.items(), 1):
-                    print(f"\n📄 Match {i}:")
-                    print(f"File: {fname}")
-                    print(f"Best Section: {match['section_name']}")
-                    print(f"Relevance: {match['match_percentage']}%")
+                    emoji = rank_emojis[i-1] if i <= 3 else "📄"
+                    display_name = fname.replace("_", " ").replace(".docx", "").replace(".pdf", "").title()
+                    
+                    print(f"   {i}. {emoji} {display_name} ({fname})")
+                    print(f"       * Relevance: {match['match_percentage']}%")
+                    
+                    # Simple logic-based 'Why' if LLM summary isn't available yet
+                    why_text = f"Strong match in the '{match['section_name']}' section."
+                    if "skills" in match['section_name']:
+                        why_text = "Highly relevant technical skills found in the profile."
+                    elif "experience" in match['section_name']:
+                        why_text = "Strong professional experience matching the job requirements."
+                    
+                    print(f"       * Why: {why_text}")
+                    
+                    # Show content snippet for context
                     if match["section_name"] != "contact_info":
-                        print(f"Content: {match['text'][:300]}...")
-
-                # Show average scores too (ranking by full resume similarity)
-                if results.get("resume_scores"):
-                    print("\n--- 📊 Overall Resume Scores ---")
-                    filename_scores = {match['filename']: results['resume_scores'].get(match['resume_id'], 0) for match in best_matches.values()}
-                    for fname, score in sorted(filename_scores.items(), key=lambda x: x[1], reverse=True):
-                        print(f"{fname}: {score}%")
+                        snippet = match['text'][:150].replace('\n', ' ').strip()
+                        print(f"       * Snippet: {snippet}...")
+                    print()
 
                 # Export if requested
                 if args.export:
                     with open(args.export, "w") as f:
                         json.dump(best_matches, f, indent=2)
-                    print(f"\n✅ Results exported to {args.export}")
+                    print(f"✅ Results exported to {args.export}")
 
                 # Generate LLM Summary
                 summarize_matches_with_llm(job_text, best_matches)
-
             else:
                 print("No section matches found at any similarity score.")
 
