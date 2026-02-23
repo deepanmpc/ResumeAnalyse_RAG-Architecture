@@ -70,6 +70,7 @@ test_sample.txt
 *.jpeg
 
 # Keep example data
+!ARCHITECTURE/
 !DATA_resume/example_resume.pdf
 !JOB_DESCRIPTIONS/example_job.pdf
 
