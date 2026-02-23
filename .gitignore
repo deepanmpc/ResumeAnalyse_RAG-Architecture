@@ -72,6 +72,7 @@ test_sample.txt
 # Keep example data
 !ARCHITECTURE/
 !DATA_resume/example_resume.pdf
+!DATA_resume/instructions.txt
 !JOB_DESCRIPTIONS/example_job.pdf
 
 # Local development
