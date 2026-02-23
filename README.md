@@ -1,17 +1,17 @@
-# Resume Analysis and Matching System 📄✨
+# Resume Analysis and Matching System 
 
 A sophisticated resume analysis and matching system that uses RAG (Retrieval Augmented Generation) to match resumes with job descriptions intelligently.
 
-## 🌟 Features
+##  Features
 
-- 📝 **Multi-Format Support**: Process resumes in PDF and Word formats
-- 🔍 **Advanced Text Extraction**: OCR capabilities for scanned documents
-- 🧠 **Intelligent Matching**: Uses embeddings and semantic search
-- 💾 **Vector Database**: ChromaDB for efficient similarity search
-- 🤖 **AI Enhancement**: Mistral AI for advanced analysis
-- 📊 **Structured Output**: JSON format analysis results.
+-  **Multi-Format Support**: Process resumes in PDF and Word formats
+-  **Advanced Text Extraction**: OCR capabilities for scanned documents
+-  **Intelligent Matching**: Uses embeddings and semantic search
+-  **Vector Database**: ChromaDB for efficient similarity search
+-  **AI Enhancement**: Mistral AI for advanced analysis
+-  **Structured Output**: JSON format analysis results.
 
-## 🏗️ Project Structure
+##  Project Structure
 
 ```
 RAG/
@@ -23,18 +23,18 @@ RAG/
 └── TEXT_EMBEDDING_MODEL/   # Text embedding generation
 ```
 
-## 🚀 Getting Started
+##  Getting Started
 
 The system operates in two modes:
 1. **Basic Mode**: Resume matching using vector similarity (always available)
-2. **Enhanced Mode**: AI-powered analysis using Mistral (requires Ollama setup)
+2. **Enhanced Mode**: AI-powered analysis using Qwen 2.5 (requires Ollama setup)
 
 ### Prerequisites
 
 - Python 3.10 or higher
 - Virtual environment
 - Tesseract OCR (for scanned documents)
-- Ollama with Mistral AI model (for enhanced analysis)
+- Ollama with Qwen 2.5 model (for enhanced analysis)
 
 ### Installation
 
@@ -55,7 +55,7 @@ The system operates in two modes:
    - Linux: `sudo apt-get install tesseract-ocr`
    - Windows: Download installer from GitHub
 
-#### Mistral AI Setup (Required for Enhanced Analysis)
+#### Qwen 2.5 AI Setup (Required for Enhanced Analysis)
 
 1. **Install Ollama**:
    - macOS/Linux:
@@ -64,17 +64,17 @@ The system operates in two modes:
      ```
    - Windows: Download from [Ollama's website](https://ollama.ai)
 
-2. **Pull Mistral Model**:
+2. **Pull Qwen 2.5 Model**:
    ```bash
-   ollama pull mistral
+   ollama pull qwen2.5:0.5b
    ```
 
 3. **Verify Installation**:
    ```bash
-   ollama run mistral "Hello, testing Mistral AI"
+   ollama run qwen2.5:0.5b "Hello, testing qwen2.5:0.5b AI"
    ```
 
-⚠️ **Important Note**: The enhanced analysis features require Mistral AI through Ollama. If you don't have Mistral AI set up:
+ **Important Note**: The enhanced analysis features require qwen2.5:0.5b AI through Ollama. If you don't have qwen2.5:0.5b AI set up:
 - Basic resume matching will still work
 - AI-enhanced analysis features will be disabled
 - You can still use the system with reduced functionality
@@ -89,21 +89,21 @@ cd RAG
 
 2. Create and activate virtual environment:
 ```bash
-# Resume Analysis and Matching System 📄✨
+# Resume Analysis and Matching System 
 
 A sophisticated resume analysis and matching system that uses RAG (Retrieval Augmented Generation) to match resumes with job descriptions intelligently.
 
-## 🌟 Features
+##  Features
 
-- 📝 **Multi-Format Support**: Process resumes in PDF and Word formats.
-- 🔍 **Advanced Text Extraction**: OCR capabilities for scanned documents.
-- 🧠 **Intelligent Matching**: Uses embeddings and semantic search to find the best candidates.
-- 💾 **Vector Database**: ChromaDB for efficient similarity search and storage.
-- 🤖 **AI Enhancement**: Mistral AI for advanced analysis and summarization.
-- 📊 **Structured Output**: JSON format for analysis results.
-- 🖥️ **Interactive Web UI**: A React-based frontend for a user-friendly experience.
+-  **Multi-Format Support**: Process resumes in PDF and Word formats.
+-  **Advanced Text Extraction**: OCR capabilities for scanned documents.
+-  **Intelligent Matching**: Uses embeddings and semantic search to find the best candidates.
+-  **Vector Database**: ChromaDB for efficient similarity search and storage.
+-  **AI Enhancement**: qwen2.5:0.5b AI for advanced analysis and summarization.
+-  **Structured Output**: JSON format for analysis results.
+-  **Interactive Web UI**: A React-based frontend for a user-friendly experience.
 
-## 🖥️ Web Frontend
+##  Web Frontend
 
 The project includes a modern and interactive web-based user interface built with React, TypeScript, and Vite.
 
@@ -118,14 +118,14 @@ The project includes a modern and interactive web-based user interface built wit
 -   **AI Summary Display**: Shows an AI-generated summary of the top matches. It gracefully handles and displays errors if the summary generation fails (e.g., if the AI model is not available).
 -   **User-Friendly Interface**: Built with modern UI components for a smooth experience.
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
 - Python 3.10 or higher
 - Node.js and npm (or yarn/pnpm)
 - Tesseract OCR (for scanned documents)
-- Ollama with Mistral AI model (for enhanced analysis)
+- Ollama with qwen2.5:0.5b AI model (for enhanced analysis)
 
 ### Installation
 
@@ -159,11 +159,11 @@ The project includes a modern and interactive web-based user interface built wit
     -   Linux: `sudo apt-get install tesseract-ocr`
     -   Windows: Download installer from GitHub
 
-5.  **Mistral AI Setup** (Optional - for enhanced analysis):
+5.  **qwen2.5:0.5b AI Setup** (Optional - for enhanced analysis):
     -   [Install Ollama](https://ollama.ai)
-    -   Pull the Mistral model: `ollama pull mistral`
+    -   Pull the qwen2.5:0.5b model: `ollama pull qwen2.5:0.5b`
 
-## 🎯 Usage
+##  Usage
 
 To run the application, you need to start both the backend server and the frontend development server.
 
@@ -200,14 +200,14 @@ You can also use the system from the command line for indexing and matching.
     python main.py --job JOB_DESCRIPTIONS/job.pdf -n 5
     ```
 
-## 🔧 Components
+##  Components
 
 -   **Backend**: FastAPI, ChromaDB, SentenceTransformers
 -   **Frontend**: React, TypeScript, Vite, Tailwind CSS, shadcn/ui
--   **AI**: Ollama, Mistral
+-   **AI**: Ollama, qwen2.5:0.5b
 
 ---
-Built with ❤️ for making recruitment smarter
+Built with  for making recruitment smarter
 
 ```
 
@@ -221,7 +221,7 @@ pip install -r requirements.txt
 - Linux: `sudo apt-get install tesseract-ocr`
 - Windows: Download installer from GitHub
 
-## 🎯 Usage
+##  Usage
 
 1. **Index Resumes**:
 ```bash
@@ -238,9 +238,9 @@ python main.py --job JOB_DESCRIPTIONS/job.pdf -n 5
 python main.py --query "python developer with 5 years experience" -n 3
 ```
 
-## 🔧 Components
+##  Components
 
-Note: AI Enhancement features require Mistral AI setup. Other components work independently.
+Note: AI Enhancement features require qwen2.5:0.5b AI setup. Other components work independently.
 
 ### 1. Knowledge Extraction (350+ lines)
 - PDF Parser: Advanced text extraction with OCR support
@@ -258,7 +258,7 @@ Note: AI Enhancement features require Mistral AI setup. Other components work in
 - Metadata handling
 
 ### 4. AI Enhancement (40+ lines)
-- Mistral AI integration
+- qwen2.5:0.5b AI integration
 - Enhanced analysis
 - Match summarization
 
@@ -267,7 +267,7 @@ Note: AI Enhancement features require Mistral AI setup. Other components work in
 - Batch processing
 - Results export
 
-## 📊 Output Format
+##  Output Format
 
 The system generates detailed JSON analysis:
 ```json
@@ -284,14 +284,14 @@ The system generates detailed JSON analysis:
 }
 ```
 
-## 📈 Performance
+##  Performance
 
 - Processes 100+ page documents
 - Sub-second query response
 - 90%+ accuracy in relevant matches
 - Supports batch processing
 
-## 🤝 Contributing
+##  Contributing
 
 1. Fork the repository
 2. Create your feature branch
@@ -299,16 +299,16 @@ The system generates detailed JSON analysis:
 4. Push to the branch
 5. Create a new Pull Request
 
-## 📝 License
+##  License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - Sentence Transformers team
 - ChromaDB developers
-- Mistral AI team
+- qwen2.5:0.5b AI team
 - OCR community
 
 ---
-Built with ❤️ for making recruitment smarter
+Built with  for making recruitment smarter
